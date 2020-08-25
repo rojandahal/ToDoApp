@@ -38,4 +38,15 @@ public class ToDoViewModel extends AndroidViewModel {
         toDoRepository.insert(toDo);
     }
 
+    /**
+     * This method will delete the data from the database
+     */
+    public void delete(ToDo toDo){
+        toDoRepository.delete(toDo);
+    }
+
+    public void deleteAll(){
+        toDoRepository.deleteAll();
+    }
+
 }

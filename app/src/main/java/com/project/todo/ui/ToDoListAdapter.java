@@ -1,6 +1,8 @@
 package com.project.todo.ui;
 
+import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,11 +10,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.project.todo.MainActivity;
 import com.project.todo.R;
 import com.project.todo.data.ToDoDao;
+import com.project.todo.data.ToDoRoomDatabase;
 import com.project.todo.model.ToDo;
+import com.project.todo.model.ToDoViewModel;
 import com.project.todo.util.ToDoRepository;
 
 import java.util.List;
@@ -26,11 +32,20 @@ import java.util.zip.Inflater;
  */
 public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoViewHolder> {
 
+    private onEditClickListener onEditClickListener;
     private final LayoutInflater todoInflater;
-    private List<ToDo> toDoList;    //Caching the list
+    private List<ToDo> toDoList;//Caching the list
 
     public ToDoListAdapter(Context context) {
         this.todoInflater = LayoutInflater.from(context);
+    }
+
+    public interface onEditClickListener {
+        void onItemClick(ToDo toDo);
+    }
+
+    public void setOnItemClickListener(onEditClickListener onItemClickListener){
+        onEditClickListener = onItemClickListener;
     }
 
     @NonNull
@@ -55,6 +70,10 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoVi
         notifyDataSetChanged();
     }
 
+    public ToDo getToDo(int position){
+        return toDoList.get(position);
+    }
+
     @Override
     public int getItemCount() {
         if (toDoList != null)
@@ -65,10 +84,23 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.ToDoVi
 
     public class ToDoViewHolder extends RecyclerView.ViewHolder {
         public TextView toDoTextView;
+        public ImageView deleteView;
+        public Application application;
 
         public ToDoViewHolder(@NonNull View itemView) {
             super(itemView);
             toDoTextView = itemView.findViewById(R.id.textView);
+            deleteView = itemView.findViewById(R.id.deleteImg);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if(onEditClickListener!=null && position!=RecyclerView.NO_POSITION) {
+                        onEditClickListener.onItemClick(toDoList.get(position));
+                    }
+                }
+            });
         }
     }
 }

@@ -41,6 +41,20 @@ public class ToDoRepository {
     }
 
     /**
+     * This method will delete the database using background
+     */
+    public void delete(ToDo toDo){
+        new deleteAsyncTask(toDoDao).execute(toDo);
+    }
+
+    /**
+     * This method will be used to delete all the data in the database
+     */
+    public void deleteAll(){
+        new deleteAllAsync(toDoDao).execute();
+    }
+
+    /**
      * This class will execute the insert method of the ToDoRoomDatabase in background thread
      * so that our UI thread is not affected
      */
@@ -54,6 +68,40 @@ public class ToDoRepository {
         @Override
         protected Void doInBackground(ToDo... params) {
             asyncTaskDao.insert(params[0]);
+            return null;
+        }
+    }
+
+    /**
+     * This class will delete a item from the database using the async task
+     */
+    private class deleteAsyncTask extends AsyncTask<ToDo, Void, Void> {
+
+        private ToDoDao asyncDeleteDao;
+        public deleteAsyncTask(ToDoDao toDoDao) {
+            asyncDeleteDao = toDoDao;
+        }
+
+        @Override
+        protected Void doInBackground(ToDo... toDos) {
+            asyncDeleteDao.deleteAToDo(toDos[0]);
+            return null;
+        }
+    }
+
+    /**
+     * This class will delete all the items in the list
+     */
+    private class deleteAllAsync extends AsyncTask<Void,Void,Void>{
+        private ToDoDao deleteAllToDoDao;
+
+        public deleteAllAsync(ToDoDao toDoDao) {
+            deleteAllToDoDao = toDoDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            toDoDao.deleteAll();
             return null;
         }
     }

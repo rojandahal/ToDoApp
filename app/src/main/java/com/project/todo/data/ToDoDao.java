@@ -2,6 +2,7 @@ package com.project.todo.data;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -24,8 +25,8 @@ public interface ToDoDao {
     @Query("DELETE FROM todo_table")
     void deleteAll();
 
-    @Query("DELETE FROM todo_table WHERE id = :id")
-    int deleteAToDo(int id);
+    @Delete
+    int deleteAToDo(ToDo toDo);
 
     @Query("UPDATE todo_table SET todo_col = :todoText WHERE id = :id")
     int updateToDoItem(String todoText, int id);
